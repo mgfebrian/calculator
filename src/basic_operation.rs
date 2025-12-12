@@ -1,13 +1,34 @@
-use std::io;
+use crate::{get_input, confirm_retry};
+
+fn read_numbers() -> Option<Vec<f64>> {
+    let input = get_input("Input Number and separate with whitespace: ");
+
+    let numbers: Result<Vec<f64>, _> = input
+        .split_whitespace()
+        .map(|x| x.parse::<f64>())
+        .collect();
+
+    match numbers {
+        Ok(nums) if nums.is_empty() => {
+            println!("Error: Input is empty");
+            None
+        }
+        Ok(nums) => Some(nums),
+        Err(_) => {
+            println!("Error: Input is not valid");
+            None
+        }
+    }
+}
 
 fn basic_intro() {
     println!("==========================");
     println!("  BASIC MENU!  ");
-    println!("1. Addition");
-    println!("2. Subtraction");
-    println!("3. Multiplication");
-    println!("4. Division");
-    println!("5. Module");
+    println!("1. Addition (+)");
+    println!("2. Subtraction (-)");
+    println!("3. Multiplication (*)");
+    println!("4. Division (/)");
+    println!("5. Module (%)");
     println!("6. Main Menu");
     println!("==========================");
     println!();
@@ -17,14 +38,9 @@ pub fn basic_menu() {
     'basic: loop {
         basic_intro();
 
-        println!("Select Number Menu: ");
-        let mut get_input = String::new();
-        io::stdin()
-            .read_line(&mut get_input)
-            .expect("Failed to read line");
-        println!();
+        let basic_menu = get_input("Select Number Basic Menu: ");
 
-        match get_input.trim().to_lowercase().as_str() {
+        match basic_menu.as_str() {
             "1" => addition(),
             "2" => substraction(),
             "3" => multiplication(),
@@ -40,219 +56,70 @@ pub fn basic_menu() {
 
 fn addition() {
     'addition: loop {
-        println!("Input Number and separate with whitespace: ");
-        let mut get_input = String::new();
-        io::stdin()
-            .read_line(&mut get_input)
-            .expect("Failed to read line");
+        let numbers = read_numbers().unwrap();
+        let result: f64 = numbers.iter().sum();
+
+        println!("Addition = {result}");
         println!();
-
-        let numbers: Vec<i32> = get_input
-            .clone()
-            .split_whitespace()
-            .into_iter()
-            .map(|x| x.parse::<i32>().unwrap())
-            .collect();
-
-        let calculate_numbers: i32 = numbers.iter().sum();
-
-        println!("Addition = {calculate_numbers}");
-        println!();
-
-        println!("Try Operation Again? (Y/n) ");
-        let mut loop_operation = String::new();
-        io::stdin()
-            .read_line(&mut loop_operation)
-            .expect("Failed to read line");
-        println!();
-
-        let is_loop: bool;
-
-        match loop_operation.trim().to_lowercase().as_str() {
-            "y" => is_loop = true,
-            "n" => is_loop = false,
-            _ => is_loop = true
-        }
-
-        if !is_loop {
-            break 'addition;
-        }
+        
+        if !confirm_retry() { break 'addition };
     }
 }
 
 fn substraction() {
     'substraction: loop {
-        println!("Input Number and separate with whitespace: ");
-        let mut get_input = String::new();
-        io::stdin()
-            .read_line(&mut get_input)
-            .expect("Failed to read line");
+        let numbers = read_numbers().unwrap();
+        let result = numbers.iter().skip(1).fold(numbers[0], |acc, &x| acc - x);
 
-        let mut numbers: Vec<i32> = get_input
-            .clone()
-            .split_whitespace()
-            .into_iter()
-            .map(|x| x.parse::<i32>().unwrap())
-            .collect();
-
-        let mut initial_substraction: i32 = numbers.remove(0);
-
-        for x in numbers {
-            initial_substraction -= x;
-        }
-
-        println!("Subsctraction = {initial_substraction}");
-
-
-        println!("Try Operation Again? (Y/n) ");
-        let mut loop_operation = String::new();
-        io::stdin()
-            .read_line(&mut loop_operation)
-            .expect("Failed to read line");
+        println!("Subsctraction = {result}");
         println!();
 
-        let is_loop: bool;
-
-        match loop_operation.trim().to_lowercase().as_str() {
-            "y" => is_loop = true,
-            "n" => is_loop = false,
-            _ => is_loop = true
-        }
-
-        if !is_loop {
-            break 'substraction;
-        }
+        if !confirm_retry() { break 'substraction };
     }
 }
 
 fn multiplication() {
     'multiplication: loop {
-        println!("Input Number and separate with whitespace: ");
-        let mut get_input = String::new();
-        io::stdin()
-            .read_line(&mut get_input)
-            .expect("Failed to read line");
+        let numbers = read_numbers().unwrap();
+        let result: f64 = numbers.iter().product();
+
+        println!("multiplication = {result}");
         println!();
 
-        let numbers: Vec<i32> = get_input
-            .clone()
-            .split_whitespace()
-            .into_iter()
-            .map(|x| x.parse::<i32>().unwrap())
-            .collect();
-
-        let calculate_numbers: i32 = numbers.iter().product();
-
-        println!("Addition = {calculate_numbers}");
-        println!();
-
-        println!("Try Operation Again? (Y/n) ");
-        let mut loop_operation = String::new();
-        io::stdin()
-            .read_line(&mut loop_operation)
-            .expect("Failed to read line");
-        println!();
-
-        let is_loop: bool;
-
-        match loop_operation.trim().to_lowercase().as_str() {
-            "y" => is_loop = true,
-            "n" => is_loop = false,
-            _ => is_loop = true
-        }
-
-        if !is_loop {
-            break 'multiplication;
-        }
+        if !confirm_retry() { break 'multiplication };
     }
 }
 
 fn division() {
     'division: loop {
-        println!("Input Number and separate with whitespace: ");
-        let mut get_input = String::new();
-        io::stdin()
-            .read_line(&mut get_input)
-            .expect("Failed to read line");
+        let numbers = read_numbers().unwrap();
 
-        let mut numbers: Vec<f32> = get_input
-            .clone()
-            .split_whitespace()
-            .into_iter()
-            .map(|x| x.parse::<f32>().unwrap())
-            .collect();
+        if numbers.contains(&0.0) {
+            println!("Error: Division Must not Contain 0");
+        } else {
+            let result = numbers.iter().skip(1).fold(numbers[0], |acc, &x| acc / x);
 
-        let mut initial_division: f32 = numbers.remove(0);
-
-        for x in numbers {
-            initial_division /= x;
+            println!("division = {result}");
+            println!();
         }
 
-        println!("Subsctraction = {initial_division}");
-
-
-        println!("Try Operation Again? (Y/n) ");
-        let mut loop_operation = String::new();
-        io::stdin()
-            .read_line(&mut loop_operation)
-            .expect("Failed to read line");
-        println!();
-
-        let is_loop: bool;
-
-        match loop_operation.trim().to_lowercase().as_str() {
-            "y" => is_loop = true,
-            "n" => is_loop = false,
-            _ => is_loop = true
-        }
-
-        if !is_loop {
-            break 'division;
-        }
+        if !confirm_retry() { break 'division };
     }
 }
 
 fn module() {
     'module: loop {
-        println!("Input Number and separate with whitespace: ");
-        let mut get_input = String::new();
-        io::stdin()
-            .read_line(&mut get_input)
-            .expect("Failed to read line");
+        let numbers = read_numbers().unwrap();
 
-        let mut numbers: Vec<f32> = get_input
-            .clone()
-            .split_whitespace()
-            .into_iter()
-            .map(|x| x.parse::<f32>().unwrap())
-            .collect();
+        if numbers.contains(&0.0) {
+            println!("Error: Module Must not Contain 0");
+        } else {
+            let result = numbers.iter().skip(1).fold(numbers[0], |acc, &x| acc % x);
 
-        let mut initial_module: f32 = numbers.remove(0);
-
-        for x in numbers {
-            initial_module %= x;
+            println!("Module = {result}");
+            println!();
         }
-
-        println!("Subsctraction = {initial_module}");
-
-
-        println!("Try Operation Again? (Y/n) ");
-        let mut loop_operation = String::new();
-        io::stdin()
-            .read_line(&mut loop_operation)
-            .expect("Failed to read line");
-        println!();
-
-        let is_loop: bool;
-
-        match loop_operation.trim().to_lowercase().as_str() {
-            "y" => is_loop = true,
-            "n" => is_loop = false,
-            _ => is_loop = true
-        }
-
-        if !is_loop {
-            break 'module;
-        }
+        
+        if !confirm_retry() { break 'module };
     }
 }

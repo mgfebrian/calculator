@@ -1,26 +1,27 @@
 use basic_operation::basic_menu;
 use advance_operation::advance_menu;
+use std::io::{self, Write};
 
 pub mod basic_operation;
 pub mod advance_operation;
 
-use std::io;
+fn get_input(prompt: &str) -> String {
+    print!("{}", prompt);
+    io::stdout().flush().unwrap();
 
-// enum Basic {
-//     Add,
-//     Sub,
-//     Mul,
-//     Div,
-//     Mod,
-// }
-//
-// enum Advance {
-//     Pow,
-//     Sqrt,
-//     Log,
-//     Abs,
-//     Round
-// }
+    let mut buffer = String::new();
+    io::stdin().read_line(&mut buffer)
+        .expect("Failed get input");
+
+    println!();
+
+    buffer.trim().to_string()
+}
+
+fn confirm_retry() -> bool {
+    let response = get_input("Do you want to try again? (Y/n) ");
+    matches!(response.to_lowercase().as_str(), "y" | "")
+}
 
 fn introduction() {
     println!("==========================");
@@ -46,24 +47,13 @@ fn help_menu() {
     println!();
 }
 
-fn get_input() -> String {
-    let mut get_input = String::new();
-    io::stdin()
-        .read_line(&mut get_input)
-        .expect("Failed to read line");
-
-    get_input
-}
-
 fn main() {
     'intro: loop {
         introduction();
+        
+        let main_menu = get_input("Select Number Main Menu: ");
 
-        println!("Select Number Menu: ");
-        let get_menu = get_input();
-        println!();
-
-        match get_menu.trim().to_lowercase().as_str() {
+        match main_menu.as_str() {
             "1" => help_menu(),
             "2" => basic_menu(),
             "3" => advance_menu(),
