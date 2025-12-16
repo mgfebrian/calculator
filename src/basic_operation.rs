@@ -119,5 +119,25 @@ mod tests {
         assert_eq!(calc_substraction(&[3.0, 2.0]), 1.0);
         assert_eq!(calc_substraction(&[]), 0.0);
     }
+    #[test]
+    fn test_multiplication() {
+        assert_eq!(calc_multiplication(&[3.0, 2.0]), 6.0);
+        assert_eq!(calc_multiplication(&[]), 1.0);
+    }
 
+    #[test]
+    fn test_division() {
+        assert_eq!(calc_division(&[4.0, 2.0]), Ok(2.0));
+        assert_eq!(calc_division(&[0.0]), Ok(0.0));
+        assert_eq!(calc_division(&[4.0, 0.0]), Err("Cannot divide with 0.0"));
+        assert_eq!(calc_division(&[]), Err("Input is empty"));
+    }
+
+    #[test]
+    fn test_module() {
+        assert_eq!(calc_module(&[9.0, 3.0]), Ok(0.0));
+        assert_eq!(calc_module(&[0.0]), Ok(0.0));
+        assert_eq!(calc_module(&[9.0, 0.0]), Err("Cannot modulo with 0.0"));
+        assert_eq!(calc_module(&[]), Err("Input is empty"));
+    }
 }
