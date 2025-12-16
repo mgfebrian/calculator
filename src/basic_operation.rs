@@ -83,7 +83,7 @@ pub fn basic_menu() {
             "4" => run_operation("Division", calc_division),
             "5" => run_operation("Module", calc_module),
             "6" => break 'basic,
-            _ => println!("Menu not found")
+            _ => println!("Menu not found"),
         }
     }
 }
@@ -100,7 +100,9 @@ where
             }
             println!();
         }
-        if !confirm_retry() { break; }
+        if !confirm_retry() {
+            break;
+        }
     }
 }
 
